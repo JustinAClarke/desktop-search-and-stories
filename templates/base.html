@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <title>{{ title|title() }}</title>  
+    {% block head %}{% endblock %}
+
+</head>
+<body>
+    
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">{{ title|title() }}</a>
+        </div>
+        <ul class="nav navbar-nav">
+            {% set active_page = active_page|default('home') -%}
+            
+            {% for href,id in links|reverse() %}
+            
+            <li {% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ id |title()}}</a></li>
+            {% endfor %}
+            <li>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Categories
+                    <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    {#{ categories }#}
+                    {% for category in categories %}
+                            <li><a href="/stories/{{ category }}">{{ category }}</a></li>
+                    {% endfor %}
+                    </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+    
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+    
+<style type="text/css">
+    img{
+        max-height: 150px;
+        width: auto;
+    }
+    th, td {
+    padding: 15px;
+    text-align: left;
+    }
+    table {
+        width: 100%;
+    }
+
+    th {
+        height: 50px;
+    }
+        table,tr,td {
+        border: 1px solid black;
+    }
+</style>
+</body>
+</html>

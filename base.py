@@ -2,7 +2,7 @@ import json
 import urllib.request
 import os,sys,time
 
-class cli():
+class base():
     def __init__(self):
         self.getLatest()
         self.getCategories()
@@ -42,9 +42,6 @@ class cli():
         if time_diff > 300:
                 self.download(url,file_name)
 
-    def getJson(sefl):
-        pass
-        
     def dumpLatest(self):
         self.getLatest()
         with open('watrcoolr.js') as json_data:
@@ -57,18 +54,50 @@ class cli():
         self.getLatest()
         with open('watrcoolr.js') as json_data:
             stories = json.load(json_data)
-            for story in stories:    
-                self.showStories(story)
+            return stories
                 
     def getStoriesCategory(self,cat):
+        self.getLatest()
+        catStories =[]
+        with open('watrcoolr.js') as json_data:
+            stories = json.load(json_data)
+            for story in stories:    
+                if story['category'] in cat:
+                    catStories.append(story)
+        return catStories
+
+    def getStoriesProvider(self,prov):
+        self.getLatest()
+        catStories =[]
+        with open('watrcoolr.js') as json_data:
+            stories = json.load(json_data)
+            for story in stories:    
+                if story['type'] in prov:
+                    catStories.append(story)
+        return catStories
+
+    def getStory(self,id):
         self.getLatest()
         with open('watrcoolr.js') as json_data:
             stories = json.load(json_data)
             for story in stories:    
-                self.showStoriesCategory(story,cat)
+                if story['id'] in id:
+                    return story
                 
     def showStories(self,story):
-        #{'feed': 'http://medium.com/', 'favicon': 'http://duckduckgo.com/watrcoolr/icons/medium2.png', 'description': '', 'proof': 64, 'image': 'https://d3n6ab9lij5r0c.cloudfront.net/86c47fb674d51ec96ca5696bd6ddfd0c.jpeg', 'timestamp': '2016-03-04 22:35:26.994505', 'url': 'https://medium.com/@matthewpennell/how-eve-online-spoiled-every-other-mmo-in-the-world-for-me-2d6033043044', 'type': '91', 'title': 'How EVE Online spoiled every other MMO in the world for me', 'id': '134439', 'category': 'Features'}
+# {
+#     'feed': 'http://medium.com/',
+#     'favicon': 'http://duckduckgo.com/watrcoolr/icons/medium2.png',
+#     'description': '',
+#     'proof': 64,
+#     'image': 'https://d3n6ab9lij5r0c.cloudfront.net/86c47fb674d51ec96ca5696bd6ddfd0c.jpeg',
+#     'timestamp': '2016-03-04 22:35:26.994505',
+#     'url': 'https://medium.com/@matthewpennell/how-eve-online-spoiled-every-other-mmo-in-the-world-for-me-2d6033043044',
+#     'type': '91',
+#     'title': 'How EVE Online spoiled every other MMO in the world for me',
+#     'id': '134439',
+#     'category': 'Features'
+# }
         string = "Website: {site}\n Link: {link}\n Category: {category}\nTitle: {title}\n".format(site=story['feed'],link=story['url'],category=story['category'],title=story['title'])
         print(string)
     
@@ -77,14 +106,30 @@ class cli():
             string = "Website: {site}\n Link: {link}\n Category: {category}\n Image: {image}\nTitle: {title}\n".format(site=story['feed'],link=story['url'],image=story['image'],category=story['category'],title=story['title'])
             print(string)
             
+    def getProviders(self):
+        url="https://watrcoolr.duckduckgo.com/watrcoolr.js?o=json&type_info=1"
+        file_name = "watrcoolrProv.js"
+        if not os.path.isfile(file_name):
+                self.download(url,file_name)
+        with open(file_name) as json_data:
+            self.providers = json.load(json_data)
+            return self.providers
+
+    def getProvider(self,id):
+        self.getProviders()
+        for providers in self.providers:    
+            if providers['id'] == id:
+                return providers
+
+
     def getCategories(self):
-        self.getLatest()
+        self.getProviders()
         self.cat=[]
-        with open('watrcoolr.js') as json_data:
-            stories = json.load(json_data)
-            for story in stories:    
-                if not story['category'] in self.cat:
-                    self.cat.append(story['category'])
+        for providers in self.providers:    
+            if not providers['category'] in self.cat:
+                self.cat.append(providers['category'])
+        self.cat.sort()
+        return self.cat
                     
     def listCategories(self):
         #if not self.cat:

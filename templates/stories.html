@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% set active_page = "stories" %}
+
+{% block content %}
+{#{data}#}
+    <table>
+    <tr><td>Provider:</td><td>Category:</td><td>Title:</td><td>Image:</td><td>Description:</td></tr>
+        {% for story in data %}
+        <tr>
+            <td><a href="/providers/{{story['type']}}">{{story['feed']}}</a></td>
+            <td><a href="/stories/{{story['category']}}">{{story['category']}}</a></td>
+            <td><a href="{{story['url']}}">{{story['title']}}</a></td>
+            <td><a href="{{story['url']}}"><img src="{{story['image']}}" alt="{{story['tite']}}"></a></td>
+            <td><p>{{story['description']}}</p></td>
+            
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
